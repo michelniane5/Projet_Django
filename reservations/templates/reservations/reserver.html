@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Réserver {{ service.nom }} — SunuRéservation</title>
+
+    <style>
+        :root {
+            --vert: #087f5b;
+            --vert-fonce: #066548;
+            --fond: #f3f7f5;
+            --texte: #172a24;
+            --gris: #66736e;
+            --bordure: #dce6e1;
+            --erreur: #b42318;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 40px 16px;
+            font-family: Arial, sans-serif;
+            color: var(--texte);
+            background:
+                radial-gradient(ellipse at top left, #dff4e9, transparent 45%),
+                var(--fond);
+        }
+
+        .conteneur {
+            width: min(100%, 680px);
+            margin: 0 auto;
+        }
+
+        .retour {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: var(--vert);
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .retour:hover {
+            text-decoration: underline;
+        }
+
+        .carte {
+            overflow: hidden;
+            border: 1px solid var(--bordure);
+            border-radius: 20px;
+            background: white;
+            box-shadow: 0 18px 50px #173b2b16;
+        }
+
+        .entete {
+            padding: 30px 32px;
+            color: white;
+            background: linear-gradient(135deg, #087f5b, #0b624b);
+        }
+
+        .marque {
+            margin: 0 0 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            opacity: 0.88;
+        }
+
+        h1 {
+            margin: 0 0 10px;
+            font-size: clamp(1.7rem, 5vw, 2.2rem);
+        }
+
+        .sous-titre {
+            margin: 0;
+            line-height: 1.5;
+            opacity: 0.92;
+        }
+
+        .details {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-top: 22px;
+            padding: 16px;
+            border: 1px solid #ffffff40;
+            border-radius: 12px;
+            background: #ffffff16;
+        }
+
+        .details small {
+            display: block;
+            margin-bottom: 5px;
+            opacity: 0.8;
+        }
+
+        .prix {
+            flex: 0 0 auto;
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-align: right;
+        }
+
+        .corps {
+            padding: 30px 32px 32px;
+        }
+
+        .intro {
+            margin: 0 0 24px;
+            color: var(--gris);
+            line-height: 1.6;
+        }
+
+        form p {
+            margin: 0 0 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        input {
+            display: block;
+            width: 100%;
+            min-height: 50px;
+            padding: 12px 14px;
+            border: 1px solid var(--bordure);
+            border-radius: 10px;
+            outline: none;
+            background: #fff;
+            color: var(--texte);
+            font: inherit;
+            transition: border-color 0.15s, box-shadow 0.15s;
+        }
+
+        input:focus {
+            border-color: var(--vert);
+            box-shadow: 0 0 0 4px #087f5b1c;
+        }
+
+        .aide {
+            display: block;
+            margin-top: 7px;
+            color: var(--gris);
+            font-size: 0.88rem;
+            line-height: 1.4;
+        }
+
+        .erreurs {
+            margin: 8px 0 0;
+            padding: 10px 12px;
+            border-radius: 8px;
+            color: var(--erreur);
+            background: #fff1f0;
+            font-size: 0.92rem;
+            list-style: none;
+        }
+
+        .erreurs li + li {
+            margin-top: 4px;
+        }
+
+        .erreurs-generales {
+            margin-bottom: 20px;
+            padding: 12px 14px;
+            border: 1px solid #f2b8b5;
+            border-radius: 10px;
+            color: var(--erreur);
+            background: #fff1f0;
+        }
+
+        .bouton {
+            width: 100%;
+            min-height: 52px;
+            margin-top: 6px;
+            border: 0;
+            border-radius: 10px;
+            color: white;
+            background: var(--vert);
+            font: inherit;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.15s, transform 0.15s;
+        }
+
+        .bouton:hover {
+            background: var(--vert-fonce);
+            transform: translateY(-1px);
+        }
+
+        .confidentialite {
+            margin: 16px 0 0;
+            color: var(--gris);
+            font-size: 0.85rem;
+            line-height: 1.5;
+            text-align: center;
+        }
+
+        @media (max-width: 540px) {
+            body {
+                padding: 20px 12px;
+            }
+
+            .entete {
+                padding: 24px 20px;
+            }
+
+            .corps {
+                padding: 24px 20px;
+            }
+
+            .details {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .prix {
+                text-align: left;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="conteneur">
+        <a class="retour" href="{% url 'reservations:accueil' %}">
+            ← Retour aux prestataires
+        </a>
+
+        <section class="carte">
+            <header class="entete">
+                <p class="marque">SunuRéservation</p>
+                <h1>Réserver un service</h1>
+                <p class="sous-titre">
+                    Envoyez votre demande à la prestataire. Elle vous contactera
+                    pour confirmer le rendez-vous.
+                </p>
+
+                <div class="details">
+                    <div>
+                        <small>Service proposé par {{ service.prestataire.nom }}</small>
+                        <strong>{{ service.nom }}</strong>
+                        <div>{{ service.duree_minutes }} minutes</div>
+                    </div>
+                    <div class="prix">{{ service.prix_fcfa }} FCFA</div>
+                </div>
+                <p>
+                    Une question avant de réserver ?
+                    <a href="tel:{{ service.prestataire.telephone }}">Appeler le prestataire</a>
+                    ou
+                    <a href="https://wa.me/{{ service.prestataire.whatsapp_number }}?text=Bonjour%2C%20je%20vous%20contacte%20au%20sujet%20du%20service%20{{ service.nom|urlencode }}." target="_blank" rel="noopener noreferrer">écrire sur WhatsApp</a>.
+                </p>
+            </header>
+
+            <div class="corps">
+                <p class="intro">
+                    Indiquez vos coordonnées et le créneau souhaité.
+                    Votre réservation restera en attente jusqu’à confirmation.
+                </p>
+
+                <form method="post">
+                    {% csrf_token %}
+
+                    {% if form.non_field_errors %}
+                        <div class="erreurs-generales">
+                            {{ form.non_field_errors }}
+                        </div>
+                    {% endif %}
+
+                    {% for field in form %}
+                        <p>
+                            <label for="{{ field.id_for_label }}">
+                                {{ field.label }}
+                            </label>
+
+                            {{ field }}
+
+                            {% if field.help_text %}
+                                <span class="aide">{{ field.help_text }}</span>
+                            {% endif %}
+
+                            {% if field.errors %}
+                                <ul class="erreurs">
+                                    {% for error in field.errors %}
+                                        <li>{{ error }}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+                        </p>
+                    {% endfor %}
+
+                    <button class="bouton" type="submit">
+                        Envoyer ma demande de réservation
+                    </button>
+
+                    <p class="confidentialite">
+                        Votre demande n’est pas confirmée immédiatement.
+                        Le prestataire doit d’abord accepter le créneau.
+                    </p>
+                </form>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

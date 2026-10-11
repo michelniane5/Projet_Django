@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Suivi de réservation — SunuRéservation</title>
+    <style>
+        :root { --vert: #087f5b; --fond: #f3f7f5; --texte: #172a24; --gris: #66736e; }
+        * { box-sizing: border-box; }
+        body { margin: 0; padding: 32px 16px; color: var(--texte); background: var(--fond); font: 16px/1.6 Arial, sans-serif; }
+        main { width: min(100%, 640px); margin: 0 auto; padding: 28px; border: 1px solid #dce6e1; border-radius: 16px; background: #fff; box-shadow: 0 12px 36px #173b2b12; }
+        h1 { margin-top: 0; color: var(--vert); }
+        .statut { display: inline-block; padding: 5px 12px; border-radius: 999px; background: #e8f5ee; font-weight: 700; }
+        .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px; }
+        .actions a, button { display: inline-block; padding: 11px 15px; border: 0; border-radius: 8px; color: #fff; background: var(--vert); font: inherit; font-weight: 700; text-decoration: none; cursor: pointer; }
+        .actions a.second { color: var(--vert); background: #e8f5ee; }
+        form { margin: 0; }
+        .message { padding: 10px 12px; border-radius: 8px; background: #e8f5ee; }
+        @media (max-width: 480px) { main { padding: 22px 18px; } .actions { flex-direction: column; } .actions a, button { text-align: center; } }
+    </style>
+</head>
+<body>
+    <main>
+        <p><a href="{% url 'reservations:accueil' %}">← SunuRéservation</a></p>
+        <h1>Suivi de votre réservation</h1>
+
+        {% for message in messages %}
+            <p class="message" role="status">{{ message }}</p>
+        {% endfor %}
+
+        <p>Bonjour {{ reservation.nom_client }}, votre demande pour <strong>{{ reservation.service.nom }}</strong> a bien été enregistrée.</p>
+        <p><strong>Prestataire :</strong> {{ reservation.service.prestataire.nom }}</p>
+        <p><strong>Créneau demandé :</strong> {{ reservation.date_heure|date:"d/m/Y à H:i" }}</p>
+        <p>Statut : <span class="statut">{{ reservation.get_statut_display }}</span></p>
+        <p>Le prestataire pourra vous contacter au <a href="tel:{{ reservation.service.prestataire.telephone }}">{{ reservation.service.prestataire.telephone }}</a> pour confirmer le rendez-vous.</p>
+
+        <div class="actions">
+            <a href="{% url 'reservations:reserver' reservation.service_id %}">Réserver ce service à nouveau</a>
+            <a class="second" href="https://wa.me/{{ reservation.service.prestataire.whatsapp_number }}?text=Bonjour%2C%20je%20vous%20contacte%20au%20sujet%20de%20ma%20r%C3%A9servation%20SunuR%C3%A9servation." target="_blank" rel="noopener noreferrer">Contacter sur WhatsApp</a>
+        </div>
+
+        {% if reservation.statut == "en_attente" %}
+            <form method="post" action="{% url 'reservations:annuler_reservation' reservation.confirmation_token %}" class="actions">
+                {% csrf_token %}
+                <button type="submit">Annuler ma demande</button>
+            </form>
+        {% endif %}
+
+        <p><a href="{% url 'reservations:accueil' %}">Retour au catalogue des prestataires</a></p>
+    </main>
+</body>
+</html>

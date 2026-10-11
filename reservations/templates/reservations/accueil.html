@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SunuRéservation — services près de chez vous</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 16px;
+            font-family: Arial, sans-serif;
+            color: #17202a;
+            background: #f5f7f6;
+        }
+
+        h1 {
+            color: #087f5b;
+        }
+
+        .recherche {
+            margin: 24px 0;
+        }
+
+        .recherche input,
+        .recherche button {
+            min-height: 44px;
+            padding: 10px;
+            font-size: 1rem;
+        }
+
+        .recherche input {
+            max-width: 100%;
+        }
+
+        button {
+            cursor: pointer;
+            border: 0;
+            border-radius: 6px;
+            color: white;
+            background: #087f5b;
+        }
+
+        .carte {
+            margin: 16px 0;
+            padding: 18px;
+            border-radius: 10px;
+            background: white;
+            box-shadow: 0 2px 8px #0001;
+        }
+
+        .service {
+            margin: 12px 0;
+            color: #445;
+        }
+
+        .prix {
+            font-weight: bold;
+            color: #087f5b;
+        }
+
+        .bouton-reserver {
+            display: inline-block;
+            margin-top: 6px;
+            padding: 9px 12px;
+            border-radius: 6px;
+            color: white;
+            background: #087f5b;
+            text-decoration: none;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                margin: 20px auto;
+            }
+
+            .carte {
+                padding: 14px;
+            }
+
+            h1 {
+                font-size: 1.7rem;
+            }
+        }
+        .bouton-whatsapp {
+            display: inline-block;
+            margin: 4px 0 12px;
+            padding: 10px 14px;
+            border-radius: 6px;
+            color: white;
+            background: #128c7e;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .bouton-whatsapp:hover {
+            background: #075e54;
+        }
+
+    </style>
+</head>
+
+<body>
+    <h1>SunuRéservation</h1>
+    <p>Découvrez les prestataires et services disponibles près de chez vous.</p>
+
+    <form class="recherche" method="get" action="{% url 'reservations:accueil' %}">
+        <label for="q">Rechercher un prestataire ou un quartier</label>
+        <input
+            type="search"
+            id="q"
+            name="q"
+            value="{{ recherche }}"
+            placeholder="Ex. coiffeur, Dakar, Parcelles..."
+        >
+        <button type="submit">Rechercher</button>
+
+        {% if recherche %}
+            <a href="{% url 'reservations:accueil' %}">Effacer</a>
+        {% endif %}
+    </form>
+
+    {% for prestataire in prestataires %}
+        <section class="carte">
+            <h2>{{ prestataire.nom }} — {{ prestataire.metier }}</h2>
+
+            <p>{{ prestataire.ville }} · {{ prestataire.quartier }}</p>
+
+            {% if prestataire.description %}
+                <p>{{ prestataire.description }}</p>
+            {% endif %}
+
+            <p>
+                Téléphone :
+                <a href="tel:{{ prestataire.telephone }}">{{ prestataire.telephone }}</a>
+            </p>
+
+            <a
+                class="bouton-whatsapp"
+                href="https://wa.me/{{ prestataire.whatsapp_number }}?text=Bonjour%2C%20je%20vous%20ai%20trouv%C3%A9%20sur%20SunuR%C3%A9servation%20et%20je%20souhaite%20des%20informations."
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                Contacter sur WhatsApp
+            </a>
+
+            <h3>Services</h3>
+
+            {% for service in prestataire.services.all %}
+                <div class="service">
+                    <strong>{{ service.nom }}</strong> —
+                    <span class="prix">{{ service.prix_fcfa }} FCFA</span>
+                    ({{ service.duree_minutes }} min)
+                      
+
+                    <a
+                        class="bouton-reserver"
+                        href="{% url 'reservations:reserver' service.id %}"
+                    >
+                        Demander ce service
+                    </a>
+                </div>
+            {% empty %}
+                <p>Aucun service renseigné pour le moment.</p>
+            {% endfor %}
+        </section>
+    {% empty %}
+        <p>Aucun prestataire trouvé. Essayez une autre recherche.</p>
+    {% endfor %}
+</body>
+</html>

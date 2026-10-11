@@ -1,0 +1,17 @@
+# Environnements virtuels
+.venv/
+venv/
+
+# Python
+__pycache__/
+*.py[cod]
+
+# Base locale de développement et fichiers de configuration secrets
+/db.sqlite3
+.env
+.env.*
+!.env.example
+
+# Outils de développement
+.vscode/
+.idea/
